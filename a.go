@@ -1,19 +1,27 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
-//延迟处理的语句按 defer 的逆序进行执行,"3"语句在return的后面，未执行。若要输出可如下执行
+var ch = make(chan int, 1)
+
 func main() {
-	var a = true
-	defer func() {
-		fmt.Println("1")
-	}()
-	defer func() {
-		fmt.Println("3")
-	}()
-	if a {
-		fmt.Println("2")
-		return
-	}
+
+	go Work("goroutine1")
+	<-ch
+	go Work("goroutine2")
+	<-ch
+	go Work("goroutine3")
+	<-ch
+	fmt.Println("successful")
+}
+
+func Work(workName string) {
+
+	time.Sleep(time.Second)
+	ch <- 1
+	fmt.Println(workName)
 
 }
